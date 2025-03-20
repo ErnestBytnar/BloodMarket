@@ -5,24 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f4aff58-f11f-455c-b448-63fea32b8b4f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/polls/serializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/polls/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BloodMarket.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BloodMarket.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/BloodMarket/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/BloodMarket/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/BloodMarket/asgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/BloodMarket/asgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/BloodMarket/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/BloodMarket/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/BloodMarket/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/BloodMarket/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/BloodMarket/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/BloodMarket/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BloodMarket/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/polls/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/polls/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/polls/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/polls/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/polls/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/polls/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/BloodMarket.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BloodMarket/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/BloodMarket/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
