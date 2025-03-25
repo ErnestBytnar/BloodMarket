@@ -8,18 +8,17 @@ const RegisterPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Wysyłanie danych do backendu przy pomocy fetch
     try {
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
-        method: "POST",  // Metoda HTTP
+        method: "POST",
         headers: {
-          "Content-Type": "application/json",  // Informujemy backend, że wysyłamy dane w formacie JSON
+          "Content-Type": "application/json", 
         },
         body: JSON.stringify({
           username,
           email,
           password,
-        }), // Zamiana danych na format JSON
+        }),
       });
 
       if (response.ok) {

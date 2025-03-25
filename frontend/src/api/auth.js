@@ -1,3 +1,5 @@
+
+
 const API_URL = "http://127.0.0.1:8000/api";
 
 export const login = async (username, password) => {
@@ -10,7 +12,7 @@ export const login = async (username, password) => {
     if (!response.ok) throw new Error("Nieprawidłowe dane logowania!");
 
     const data = await response.json();
-    localStorage.setItem("access", data.access);
+    localStorage.setItem("access_token", data.access);
     localStorage.setItem("refresh", data.refresh);
     return data;
 };
@@ -27,7 +29,7 @@ export const refreshAccessToken = async () => {
 
     const data = await response.json();
     if (response.ok) {
-        localStorage.setItem("access", data.access);
+        localStorage.setItem("access_token", data.access);
         return data.access;
     } else {
         logout();
@@ -36,6 +38,8 @@ export const refreshAccessToken = async () => {
 };
 
 export const logout = () => {
-    localStorage.removeItem("access");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("refresh");
-};
+    window.location.href="/login";
+}
+

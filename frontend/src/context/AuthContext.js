@@ -20,10 +20,10 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
             localStorage.setItem("access_token", data.access);
             setToken(data.access);
-            return true;  // Sukces logowania
+            return true;
         } catch (error) {
             console.error("Błąd logowania", error);
-            return false; // Logowanie nie powiodło się
+            return false;
         }
     };
 

@@ -1,9 +1,9 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";  // Importujemy useNavigate
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const LoginPage = () => {
-    const navigate = useNavigate();  // Hook do przekierowań
+    const navigate = useNavigate();  
     const { login } = useContext(AuthContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -12,7 +12,9 @@ const LoginPage = () => {
         e.preventDefault();
         const success = await login(username, password);
         if (success) {
-            navigate("/dashboard");
+            const event = new Event("authChange");
+            window.dispatchEvent(event)
+            navigate("/main");
         }
     };
 
