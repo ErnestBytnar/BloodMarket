@@ -37,6 +37,37 @@ export const refreshAccessToken = async () => {
     }
 };
 
+export const registerUser = async (username, email, password) =>{
+    try{
+        console.log("Data being sent to the backend:", {
+            username,
+            email,
+            password,
+        });
+        const response = await fetch(`${API_URL}/register/`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password
+            }),
+        });
+        const data = await response.json();
+
+        if(!response.ok){
+            throw new Error(data.detail || "Błąd rejestracji");
+        }
+        return data;
+    } catch (error){
+        console.error("Błąd rejestracji", error);
+        throw error;
+    }
+};
+
+
 export const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh");
