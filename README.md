@@ -20,9 +20,10 @@
 
     npm install react-router-dom
 
-## Endpoints
+## Endpointy
 
 ### Frontend - React
+- **`/`** - Strona główna
 - **`/login`** - Endpoint logowania
 - **`/dashboard`** - Strona główna, dostępna po zalogowaniu
 - **`/register`** - Endpoint rejestracji
