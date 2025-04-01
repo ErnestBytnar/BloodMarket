@@ -39,11 +39,6 @@ export const refreshAccessToken = async () => {
 
 export const registerUser = async (username, email, password) =>{
     try{
-        console.log("Data being sent to the backend:", {
-            username,
-            email,
-            password,
-        });
         const response = await fetch(`${API_URL}/register/`,{
             method: "POST",
             headers: {

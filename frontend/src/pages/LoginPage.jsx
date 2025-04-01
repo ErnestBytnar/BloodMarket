@@ -5,25 +5,90 @@ import { AuthContext } from "../context/AuthContext";
 const LoginPage = () => {
     const navigate = useNavigate();  
     const { login } = useContext(AuthContext);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+
+    const [error, setError]=useState(null);
+    const [form,setForm]=useState({
+        username: '',
+        password: '',
+      });
+
+
+      const updateField = e =>{
+        setForm({
+          ...form,
+          [e.target.name]: e.target.value
+        })
+    
+      }
+
+
+
+
+      const validate = form =>{
+    
+        if(!form.username){
+          return "Nazwa jest wymagana";
+        }
+        else if(!/^[a-zA-Z0-9._-]{2,20}$/i.test(form.username))
+          return "Dane są nieprawidłowe";
+    
+        if(!form.password){
+          return "Hasło jest wymagane";
+        }
+        else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i.test(form.password)){
+          return "Dane są nieprawidłowe";
+        }
+    
+    
+        return null;
+        
+      }
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const success = await login(username, password);
-        if (success) {
-            const event = new Event("authChange");
-            window.dispatchEvent(event)
-            navigate("/main");
-        }
+        const errorMsg = validate(form);
+        if(errorMsg){
+            setError(errorMsg);
+            console.log(errorMsg);
+            return; 
+          }
+
+          try{
+            await login(
+                form.username,
+                form.password);
+                const event = new Event("authChange");
+                window.dispatchEvent(event)
+                navigate("/main");
+          }
+          catch(error){
+            alert(error.message);
+          }
+
     };
+;
 
     return (
         <div>
             <h2>Logowanie</h2>
             <form onSubmit={handleLogin}>
-                <input type="text" placeholder="Nazwa użytkownika" onChange={(e) => setUsername(e.target.value)} />
-                <input type="password" placeholder="Hasło" onChange={(e) => setPassword(e.target.value)} />
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="Nazwa użytkownika"
+                    value={form.username}
+                    onChange={updateField}
+                 />
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Hasło"
+                    value={form.password}
+                    onChange={updateField}
+                    />
+                    {error && <p style={{ color: "red" }}>{error}</p>}
                 <button type="submit">Zaloguj</button>
             </form>
         </div>
