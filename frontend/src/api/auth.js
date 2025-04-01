@@ -53,7 +53,9 @@ export const registerUser = async (username, email, password) =>{
         const data = await response.json();
 
         if(!response.ok){
-            throw new Error(data.detail || "Błąd rejestracji");
+            const error = new Error("Błąd rejestracji");
+            error.response = { data };
+            throw error;
         }
         return data;
     } catch (error){

@@ -12,6 +12,13 @@ const RegisterPage = () => {
     passwordRep: ''
   });
 
+  const [formErrors, setFormErrors] = useState({
+    username: '',
+    email: '',
+    password: '',
+    passwordRep: ''
+  });
+
   const updateField = e =>{
     setForm({
       ...form,
@@ -72,7 +79,17 @@ const RegisterPage = () => {
       navigate('/login');
     }
     catch(error){
-      alert(error.message);
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        setFormErrors({
+          username: errorData.username || '',
+          email: errorData.email || '',
+          password: errorData.password || '',
+          passwordRep: errorData.passwordRep || ''
+        });
+      } else {
+        setError("Wystąpił błąd. Spróbuj ponownie później.");
+      }
     }
   };
 
@@ -80,6 +97,7 @@ const RegisterPage = () => {
     <div>
       <h2>Rejestracja</h2>
       <form onSubmit={handleRegister}>
+      <div>
         <input
           id="username"
           name="username"
@@ -88,6 +106,9 @@ const RegisterPage = () => {
           value={form.username}
           onChange={updateField}
         />
+        {formErrors.username && <p style={{ color: "red" }}>{formErrors.username}</p>}
+        </div>
+        <div>
         <input
           id="email"
           name="email"
@@ -96,6 +117,10 @@ const RegisterPage = () => {
           value={form.email}
           onChange={updateField}
         />
+        {formErrors.email && <p style={{ color: "red" }}>{formErrors.email}</p>}
+        </div>
+
+        <div>
         <input
           id="password"
           name="password"
@@ -104,6 +129,10 @@ const RegisterPage = () => {
           value={form.password}
           onChange={updateField}
         />
+        {formErrors.password && <p style={{ color: "red" }}>{formErrors.password}</p>}
+        </div>
+
+        <div>
         <input
           id="passwordRep"
           name="passwordRep"
@@ -111,6 +140,7 @@ const RegisterPage = () => {
           placeholder="Powtórz hasło"
           onChange={updateField}
         />
+        </div>
         <p>Hasło musi zawierać co najmniej 8 znaków, jedną dużą literę, jedną małą literę, jedną cyfrę i jeden znak specjalny</p>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <button type="submit">Zarejestruj</button>
