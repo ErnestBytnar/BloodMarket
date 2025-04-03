@@ -67,7 +67,6 @@ const RegisterPage = () => {
     const errorMsg = validate(form);
     if(errorMsg){
       setError(errorMsg);
-      console.log(errorMsg);
       return; 
     }
     try{

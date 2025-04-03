@@ -13,17 +13,21 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ username, password }),
             });
 
-            if (!response.ok) {
-                throw new Error("Błąd logowania");
-            }
 
             const data = await response.json();
+            if (!response.ok) {
+                const error = new Error(data.error || "Błąd logowania");
+                error.response = { status: response.status, data };
+                throw error;
+            }
+
+        
             localStorage.setItem("access_token", data.access);
+            localStorage.setItem("refresh_token", data.refresh);
             setToken(data.access);
-            return true;
+            return data;
         } catch (error) {
-            console.error("Błąd logowania", error);
-            return false;
+            throw error;
         }
     };
 

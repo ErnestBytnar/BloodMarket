@@ -15,6 +15,7 @@
     pip install django-cors-headers
     pip install djangorestframework-simplejwt
     pip install psycopg2
+    pip install django-ratelimit
 
 ### Frontend (React)
 

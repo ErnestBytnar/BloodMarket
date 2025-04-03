@@ -49,7 +49,6 @@ const LoginPage = () => {
         const errorMsg = validate(form);
         if(errorMsg){
             setError(errorMsg);
-            console.log(errorMsg);
             return; 
           }
 
@@ -62,11 +61,14 @@ const LoginPage = () => {
                 navigate("/main");
           }
           catch(error){
-            alert(error.message);
+            if (error.response && error.response.status === 429) {
+              setError(error.response.data.error || "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.");
+          } else {
+              setError("Niepoprawne dane.");
           }
 
     };
-;
+  };
 
     return (
         <div>
