@@ -8,6 +8,8 @@ import Navbar from "./components/Navbar/Navbar";
 import MainPage from "./pages/MainPage";
 import WelcomePage from "./pages/WelcomePage";
 import LoggedRoute from "./components/LoggedRoute";
+import AdminRoute from "./components/AdminRoute";
+import AdminPage from "./pages/AdminPage";
 
 const App = () => {
     
@@ -20,7 +22,7 @@ const App = () => {
                         <Route path="/register" element={<LoggedRoute><RegisterPage /> </LoggedRoute>} />
                         <Route path="/" element={< WelcomePage/>} />
                         <Route path="/main" element={<ProtectedRoute><MainPage /></ProtectedRoute>}/>
-                        
+                        <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>}/>
                     </Route>
                 </Routes>
             </Router>

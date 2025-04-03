@@ -1,23 +1,27 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
+    groups = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields= ['id','username','email']
+        fields = ['id', 'username', 'email', 'groups']
+
+    def get_groups(self, obj):
+        return [group.name for group in obj.groups.all()]
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=20)
     email = serializers.EmailField()
-    password=serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username','password','email']
+        fields = ['username', 'password', 'email']
 
     def validate_username(self, value):
         if len(value) < 2:
@@ -53,6 +57,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             email=validated_data['email']
         )
+        user_group = Group.objects.get(name='User')
+        user.groups.add(user_group)
         return user
 
 
@@ -62,5 +68,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         if not self.user.is_active:
             raise AuthenticationFailed("Konto jest nieaktywne.")
+
+        groups = list(self.user.groups.values_list("name", flat=True))
+
+        data["groups"] = groups
+        self.user.groups_list = groups
 
         return data

@@ -1,10 +1,11 @@
 import { useState,useEffect } from "react"
 import { Link } from "react-router-dom";
 import { logout } from "../../api/auth";
+import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
 
 const Navbar = () => {
-    
+    const { user } = useAuth();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
@@ -44,6 +45,9 @@ const Navbar = () => {
                 {isAuthenticated ? (
                     <>
                     <Link to="/main">Strona główna</Link>
+                    {user && user.groups?.includes("Admin") && (
+                            <Link to="/admin">Panel Administratora</Link>
+                        )}
                     <button onClick={handleLogout}>Wyloguj się</button>
                     </>
                 ):(

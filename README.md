@@ -28,6 +28,7 @@
 - **`/login`** - Endpoint logowania
 - **`/dashboard`** - Strona główna, dostępna po zalogowaniu
 - **`/register`** - Endpoint rejestracji
+- **`/admin`** - Strona admina
 
 ### Backend - Django
 - **`api/token/`** - Endpoint do uzyskiwania tokenu JWT
