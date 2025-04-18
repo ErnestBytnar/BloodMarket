@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
-    'polls.apps.PollsConfig'
+    'polls.apps.PollsConfig',
+
+
 ]
 
 MIDDLEWARE = [
