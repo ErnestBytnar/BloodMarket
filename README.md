@@ -35,3 +35,8 @@
 - **`api/token/refresh/`** - Endpoint do odświeżania tokenu JWT
 - **`api/user/`** - Endpoint do pobierania danych użytkownika
 - **`api/register/`** - Endpoint do rejestrowania użytkownika
+
+
+## Schemat bazy danych 
+
+<img width="938" alt="Zrzut ekranu 2025-04-18 o 16 59 21" src="https://github.com/user-attachments/assets/84d16933-7d39-44f9-8083-2f7ab673697b" />
