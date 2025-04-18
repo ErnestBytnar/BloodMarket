@@ -16,6 +16,7 @@
     pip install djangorestframework-simplejwt
     pip install psycopg2
     pip install django-ratelimit
+    pip install django-countries
 
 ### Frontend (React)
 
