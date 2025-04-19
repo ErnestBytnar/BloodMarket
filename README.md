@@ -40,4 +40,5 @@
 
 ## Schemat bazy danych 
 
-<img width="938" alt="Zrzut ekranu 2025-04-18 o 16 59 21" src="https://github.com/user-attachments/assets/84d16933-7d39-44f9-8083-2f7ab673697b" />
+<img width="955" alt="Zrzut ekranu 2025-04-19 o 22 46 47" src="https://github.com/user-attachments/assets/1dfe5dc4-4215-4917-b715-75e8c079999d" />
+
