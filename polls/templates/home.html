@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home template</title>
+</head>
+<body>
+    <h1>Dostępne grupy krwi</h1>
+
+    <ul>
+        {% for blood in blood_types %}
+            <li>Typ krwi : {{ blood.types }}RH typ :  {{ blood.rh_factor }}</li>
+        {% empty %}
+            <li>Brak dostępnych grup krwi.</li>
+        {% endfor %}
+    </ul>
+    <h1>Tranzakcje krwi </h1>
+<ul>
+        {% for blood in blood_transactions %}
+            <li>Total price po zakupie nie bedzie dzialac{{  blood.total_price }} Data tranzakcji : {{ blood.transaction_date }}</li>
+        {% empty %}
+            <li>Brak dostępnych grup krwi.</li>
+        {% endfor %}
+    </ul>
+    <h1>Oferty krwi </h1>
+<ul>
+        {% for blood in blood_offers %}
+            <li>Volume ml krwi : {{ blood.volume_ml }} Finalna cena krwi : {{ blood.total_price }} Cena przeliczona na 100ml :  {{blood.price_per_100ml}}</li>
+        {% empty %}
+            <li>Brak dostępnych grup krwi.</li>
+        {% endfor %}
+    </ul>
+    <form method="POST" action="">
+  {% csrf_token %}
+  <button type="submit">Kup ofertę</button>
+</form>
+
+
+<h2>Oferta Krwi</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ blood_offers_form.as_p }}
+    <button type="submit" name="blood_offers_form">Zapisz</button>
+</form>
+
+<h2>Oferta 2</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ types_form.as_p }}
+    <button type="submit" name="types_form">Zapisz</button>
+</form>
+
+<h2>Tranzakcja symulacja 3</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ transaction_form.as_p }}
+    <button type="submit" name="transaction_form">Zapisz</button>
+</form>
+
+</body>
+</html>
