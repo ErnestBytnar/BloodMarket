@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer
+from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import BloodTypes,BloodTransaction,BloodOffers
@@ -43,22 +43,66 @@ def test_dummy_home(request):
 
     return render(request,'home.html',context)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def buy_offer(request):
-    offer_id = request.data.get('offer_id')
-    offer = get_object_or_404(BloodOffers, id=offer_id, available=True)
+@api_view(['GET'])
+#@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 
-    transaction = BloodTransaction.objects.create(
-        buyer_id=request.user,
-        offer_id=offer,
-        total_price=offer.total_price
-    )
+def get_data_from_blood_transactions(request):
+    blood_offers = BloodTransaction.objects.all()
+    serializer = BloodTransactionSerializer(blood_offers,many=True)
+    return Response(serializer.data)
 
-    offer.available = False
-    offer.save()
 
-    return Response({'message': 'Zakupiono', 'transaction_id': transaction.id})
+@api_view(['GET'])
+#@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+
+def get_data_from_blood_offers(request):
+    blood_offers = BloodOffers.objects.all()
+    serializer = BloodOfferSerializer(blood_offers,many=True)
+    return Response(serializer.data)
+
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def make_transaction(request):
+    try:
+        offer_id = request.data.get('offer_id')
+        buyer_id = request.data.get('buyer_id')
+
+        if not offer_id or not buyer_id:
+            return Response({'error': 'Brakuje offer_id albo buyer_id'}, status=400)
+
+        try:
+            offer = BloodOffers.objects.get(id=offer_id)
+        except BloodOffers.DoesNotExist:
+            return Response({'error': 'Nie ma takiej oferty'}, status=404)
+
+        if not offer.available:
+            return Response({'error': 'Ta oferta nie jest już dostępna'}, status=400)
+
+        try:
+            buyer = User.objects.get(id=buyer_id)
+        except User.DoesNotExist:
+            return Response({'error': 'Kupujacy nie znaleziony !'}, status=404)
+
+        transaction = BloodTransaction.objects.create(
+            offer_id=offer,
+            buyer_id=buyer,
+            total_price=offer.total_price
+        )
+        offer.available = False
+        offer.save()
+
+        serializer = BloodTransactionSerializer(transaction)
+        return Response(serializer.data, status=201)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+
 
 
 @api_view(['GET'])

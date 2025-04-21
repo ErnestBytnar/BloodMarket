@@ -6,7 +6,6 @@ class BloodOffersForm(ModelForm):
         model = BloodOffers
         fields =['user_id','blood_type_id','volume_ml','total_price','location']
 
-
 class TypesForm(ModelForm):
     class Meta:
         model = BloodTypes

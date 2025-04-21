@@ -2,6 +2,19 @@ from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import BloodOffers,BloodTypes,BloodTransaction
+
+
+class BloodOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BloodOffers
+        fields ='__all__'
+
+class BloodTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BloodTransaction
+        fields =['offer_id','buyer_id','total_price']
+
 
 
 class UserSerializer(serializers.ModelSerializer):
