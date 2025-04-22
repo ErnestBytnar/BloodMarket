@@ -49,6 +49,23 @@ def show_blood_types(request):
     serializer = BloodTypesSerializer(offers,many=True)
     return Response(serializer.data)
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_sorted_offers(request):
+    sort_by = request.GET.get('sort_by', 'id')       # np. 'total_price', 'volume_ml'
+    order = request.GET.get('order', 'asc')          # 'asc' lub 'desc'
+
+    allowed_fields = ['id', 'total_price', 'volume_ml', 'location', 'created_at']
+
+    if sort_by not in allowed_fields:
+        return Response({'error': f'Nie można sortować po {sort_by}'}, status=400)
+
+    sort_expression = f"-{sort_by}" if order == 'desc' else sort_by
+
+    offers = BloodOffers.objects.all().order_by(sort_expression)
+    serializer = BloodOfferSerializer(offers, many=True)
+    return Response(serializer.data)
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
