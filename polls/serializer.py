@@ -6,6 +6,12 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import BloodOffers,BloodTypes,BloodTransaction
 
+class BloodTypesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BloodTypes
+        fields = '__all__'
+
+
 class CreateOfferSerializer(serializers.ModelSerializer):
 
     user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
@@ -83,9 +89,6 @@ class MakeTransactionSerializer(serializers.ModelSerializer):
         return transaction
 
 
-
-
-
 class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     class Meta:
@@ -94,6 +97,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]
+
+
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
