@@ -1,9 +1,47 @@
+from dataclasses import fields
+
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import BloodOffers,BloodTypes,BloodTransaction
 
+class CreateOfferSerializer(serializers.ModelSerializer):
+
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    blood_type_id = serializers.PrimaryKeyRelatedField(queryset=BloodTypes.objects.all())
+
+    class Meta:
+        model = BloodOffers
+        fields = ['user_id', 'blood_type_id', 'volume_ml', 'total_price', 'location']
+
+    def validate_volume_ml(self,value):
+        if value <= 0:
+            raise serializers.ValidationError("Za mało krwi !!")
+        else:
+            return value
+
+    def validate_price(self,price):
+        if price <=0:
+            raise serializers.ValidationError("Za niska cena !!")
+        else:
+            return price
+
+    def create(self,validated_data):
+        user = validated_data['user_id']
+        blood_type = validated_data['blood_type_id']
+        volume = validated_data['volume_ml']
+        price = validated_data['total_price']
+        location = validated_data['location']
+
+        offer = BloodOffers.objects.create(
+            user_id=user,
+            blood_type_id=blood_type,
+            volume_ml=volume,
+            total_price=price,
+            location=location
+        )
+        return offer
 
 class BloodOfferSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,6 +52,37 @@ class BloodTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BloodTransaction
         fields =['offer_id','buyer_id','total_price']
+
+class MakeTransactionSerializer(serializers.ModelSerializer):
+    offer_id = serializers.PrimaryKeyRelatedField(queryset=BloodOffers.objects.all())
+    buyer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    class Meta:
+        model = BloodTransaction
+        fields = ['offer_id', 'buyer_id']
+
+    def validate(self, data):
+        offer = data.get('offer_id')
+        if not offer.available:
+            raise serializers.ValidationError("Ta oferta nie jest już dostępna.")
+        return data
+
+    def create(self, validated_data):
+        offer = validated_data['offer_id']
+        buyer = validated_data['buyer_id']
+
+        transaction = BloodTransaction.objects.create(
+            offer_id=offer,
+            buyer_id=buyer,
+            total_price=offer.total_price
+        )
+
+        offer.available = False
+        offer.save()
+
+        return transaction
+
+
 
 
 
