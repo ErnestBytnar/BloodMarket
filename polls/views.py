@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer,MakeTransactionSerializer,CreateOfferSerializer
+from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer,MakeTransactionSerializer,CreateOfferSerializer,BloodTypesSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import BloodTypes,BloodTransaction,BloodOffers
@@ -41,6 +41,14 @@ def test_dummy_home(request):
             transaction_form.save()
 
     return render(request,'home.html',context)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def show_blood_types(request):
+    offers = BloodTypes.objects.all()
+    serializer = BloodTypesSerializer(offers,many=True)
+    return Response(serializer.data)
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -87,7 +95,8 @@ def make_transaction(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_user_data(request):
     user = request.user
     serializer = UserSerializer(user)
