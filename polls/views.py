@@ -1,9 +1,13 @@
+from datetime import timedelta,timezone
+
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
+from django_filters.rest_framework import DjangoFilterBackend
 from django_ratelimit.decorators import ratelimit
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -12,7 +16,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import BloodTypes,BloodTransaction,BloodOffers
 from. forms import BloodOffersForm,TypesForm,TransactionForm
-
+from .search_filter import BloodOffersFilter
 
 
 def test_dummy_home(request):
@@ -42,11 +46,35 @@ def test_dummy_home(request):
 
     return render(request,'home.html',context)
 
+#po 7 dniach oferty avaible = False
+def get_queryset(self):
+    cutoff = timezone.now() - timedelta(days=7)
+    BloodOffers.objects.filter(available=True, created_at__lt=cutoff).update(available=False)
+    return BloodOffers.objects.all()
+
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def show_blood_types(request):
     offers = BloodTypes.objects.all()
     serializer = BloodTypesSerializer(offers,many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_sorted_offers(request):
+    sort_by = request.GET.get('sort_by', 'id')       # np. 'total_price', 'volume_ml'
+    order = request.GET.get('order', 'asc')          # 'asc' lub 'desc'
+
+    allowed_fields = ['id', 'total_price', 'volume_ml', 'location', 'created_at']
+
+    if sort_by not in allowed_fields:
+        return Response({'error': f'Nie można sortować po {sort_by}'}, status=400)
+
+    sort_expression = f"-{sort_by}" if order == 'desc' else sort_by
+
+    offers = BloodOffers.objects.all().order_by(sort_expression)
+    serializer = BloodOfferSerializer(offers, many=True)
     return Response(serializer.data)
 
 
@@ -75,9 +103,15 @@ def get_data_from_blood_transactions(request):
 #@permission_classes([IsAuthenticated])
 @permission_classes([AllowAny])
 def get_data_from_blood_offers(request):
-    blood_offers = BloodOffers.objects.all()
-    serializer = BloodOfferSerializer(blood_offers,many=True)
+    blood_offers = BloodOffersFilter(request.GET,queryset=BloodOffers.objects.all())
+
+    if not blood_offers.is_valid():
+        return Response(blood_offers.errors,status=400)
+
+    serializer = BloodOfferSerializer(blood_offers.qs,many=True)
     return Response(serializer.data)
+
+
 
 
 
@@ -91,6 +125,12 @@ def make_transaction(request):
         return Response(MakeTransactionSerializer(transaction).data,status=201)
     else:
         return Response(serializer.errors, status=400)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def filter_offers(request):
+    pass
+
 
 
 
@@ -121,3 +161,4 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         if getattr(request, 'limited', False):
             return JsonResponse({"error": "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę."}, status=429)
         return super().post(request, *args, **kwargs)
+

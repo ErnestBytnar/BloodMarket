@@ -14,7 +14,7 @@ class BloodTypes(models.Model):
     def __str__(self):
         return f'{self.types} {self.rh_factor}'
 
-    class Meta: # unikalne typy czyli mi sie to nie powtorzy
+    class Meta: #
         unique_together = ('types', 'rh_factor')
 
 class BloodTransaction(models.Model):
