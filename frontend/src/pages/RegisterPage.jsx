@@ -2,10 +2,12 @@ import { useState } from "react";
 import { registerUser } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 
+
+
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const [error, setError]=useState(null);
-  const [form,setForm]=useState({
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({
     email: '',
     username: '',
     password: '',
@@ -19,130 +21,177 @@ const RegisterPage = () => {
     passwordRep: ''
   });
 
-  const updateField = e =>{
+  const updateField = e => {
     setForm({
       ...form,
       [e.target.name]: e.target.value
-    })
+    });
+    // Czyść błąd przy zmianie pola
+    setFormErrors({
+      ...formErrors,
+      [e.target.name]: ''
+    });
+    setError(null);
+  };
 
-  }
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'email':
+        if (!value) return "Email jest wymagany";
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(value)) {
+          return "Nieprawidłowy adres email";
+        }
+        return '';
 
-  const validate = form =>{
-    if(!form.email){
-      return "Email jest wymagany";
+      case 'username':
+        if (!value) return "Nazwa jest wymagana";
+        if (!/^[a-zA-Z0-9._-]{2,20}$/i.test(value)) {
+          return "Niepoprawna nazwa użytkownika (2-20 znaków)";
+        }
+        return '';
+
+      case 'password':
+        if (!value) return "Hasło jest wymagane";
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i.test(value)) {
+          return "Hasło wymaga 8 znaków, w tym dużej i małej litery, cyfry i znaku specjalnego";
+        }
+        return '';
+
+      case 'passwordRep':
+        if (!value) return "Powtórz hasło";
+        if (value !== form.password) return "Hasła nie są identyczne";
+        return '';
+
+      default:
+        return '';
     }
-    else if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(form.email)){
-      return "Nieprawidłowy adres email";
-    }
+  };
 
-    if(!form.username){
-      return "Nazwa jest wymagana";
-    }
-    else if(!/^[a-zA-Z0-9._-]{2,20}$/i.test(form.username))
-      return "Niepoprawna nazwa użytkownika";
+  const validateForm = () => {
+    const errors = {
+      email: validateField('email', form.email),
+      username: validateField('username', form.username),
+      password: validateField('password', form.password),
+      passwordRep: validateField('passwordRep', form.passwordRep)
+    };
 
-    if(!form.password){
-      return "Hasło jest wymagane";
-    }
-    else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i.test(form.password)){
-      return "Hasło musi zawierać co najmniej 8 znaków, jedną dużą literę, jedną małą literę, jedną cyfrę i jeden znak specjalny";
-    }
+    setFormErrors(errors);
 
-    if(!form.passwordRep){
-      return "Powtórz hasło";
-    }
-    
-    if(form.password !== form.passwordRep){
-      return "Hasła nie są takie same";
-    }
-
-    return null;
-    
-  }
-
-
+    return !Object.values(errors).some(error => error !== '');
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const errorMsg = validate(form);
-    if(errorMsg){
-      setError(errorMsg);
-      return; 
+
+    if (!validateForm()) {
+      return;
     }
-    try{
-      await registerUser(
-       form.username,
-        form.email,
-         form.password);
-      alert("Rejestracja zakończona sukcesem");
+
+    try {
+      await registerUser(form.username, form.email, form.password);
+      alert("Rejestracja zakończona sukcesem!");
       navigate('/login');
-    }
-    catch(error){
+    } catch (error) {
       if (error.response && error.response.data) {
-        const errorData = error.response.data;
-        setFormErrors({
-          username: errorData.username || '',
-          email: errorData.email || '',
-          password: errorData.password || '',
-          passwordRep: errorData.passwordRep || ''
-        });
+        // Obsługa błędów z backendu
+        const backendErrors = error.response.data;
+
+        const newErrors = {};
+        if (backendErrors.username) newErrors.username = backendErrors.username.join(' ');
+        if (backendErrors.email) newErrors.email = backendErrors.email.join(' ');
+        if (backendErrors.password) newErrors.password = backendErrors.password.join(' ');
+
+        setFormErrors(prev => ({ ...prev, ...newErrors }));
+
+        setError("Popraw błędy w formularzu");
       } else {
-        setError("Wystąpił błąd. Spróbuj ponownie później.");
+        setError(error.message || "Wystąpił błąd podczas rejestracji");
       }
     }
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
       <h2>Rejestracja</h2>
-      <form onSubmit={handleRegister}>
-      <div>
-        <input
-          id="username"
-          name="username"
-          type="text"
-          placeholder="Nazwa użytkownika"
-          value={form.username}
-          onChange={updateField}
-        />
-        {formErrors.username && <p style={{ color: "red" }}>{formErrors.username}</p>}
-        </div>
+      <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <div>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={updateField}
-        />
-        {formErrors.email && <p style={{ color: "red" }}>{formErrors.email}</p>}
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Nazwa użytkownika"
+            value={form.username}
+            onChange={updateField}
+            style={{ width: '100%', padding: '8px' }}
+          />
+          {formErrors.username && <p style={{ color: "red", margin: '5px 0 0', fontSize: '0.9em' }}>{formErrors.username}</p>}
         </div>
 
         <div>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Hasło"
-          value={form.password}
-          onChange={updateField}
-        />
-        {formErrors.password && <p style={{ color: "red" }}>{formErrors.password}</p>}
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={updateField}
+            style={{ width: '100%', padding: '8px' }}
+          />
+          {formErrors.email && <p style={{ color: "red", margin: '5px 0 0', fontSize: '0.9em' }}>{formErrors.email}</p>}
         </div>
 
         <div>
-        <input
-          id="passwordRep"
-          name="passwordRep"
-          type="password"
-          placeholder="Powtórz hasło"
-          onChange={updateField}
-        />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Hasło"
+            value={form.password}
+            onChange={updateField}
+            style={{ width: '100%', padding: '8px' }}
+          />
+          {formErrors.password && <p style={{ color: "red", margin: '5px 0 0', fontSize: '0.9em' }}>{formErrors.password}</p>}
         </div>
-        <p>Hasło musi zawierać co najmniej 8 znaków, jedną dużą literę, jedną małą literę, jedną cyfrę i jeden znak specjalny</p>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Zarejestruj</button>
+
+        <div>
+          <input
+            id="passwordRep"
+            name="passwordRep"
+            type="password"
+            placeholder="Powtórz hasło"
+            value={form.passwordRep}
+            onChange={updateField}
+            style={{ width: '100%', padding: '8px' }}
+          />
+          {formErrors.passwordRep && <p style={{ color: "red", margin: '5px 0 0', fontSize: '0.9em' }}>{formErrors.passwordRep}</p>}
+        </div>
+
+        <div style={{ fontSize: '0.8em', color: '#666' }}>
+          <p>Wymagania hasła:</p>
+          <ul>
+            <li>Minimum 8 znaków</li>
+            <li>Przynajmniej jedna duża litera</li>
+            <li>Przynajmniej jedna mała litera</li>
+            <li>Przynajmniej jedna cyfra</li>
+            <li>Przynajmniej jeden znak specjalny (@$!%*?&)</li>
+          </ul>
+        </div>
+
+        {error && <p style={{ color: "red", textAlign: 'center' }}>{error}</p>}
+
+        <button
+          type="submit"
+          style={{
+            padding: '10px',
+            backgroundColor: '#d32f2f',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Zarejestruj
+        </button>
       </form>
     </div>
   );

@@ -52,11 +52,13 @@ const Navbar = () => {
                     </>
                 ):(
                     <>
+                    <Link to="/offers">Blood Offers</Link>
+                    <Link to="/transactions">My Transactions</Link>
                     <Link to="/login">Logowanie</Link>
                     <Link to="/register">Rejestracja</Link>
                     </>
-                    
-                    
+
+
                 )
             }
             </div>

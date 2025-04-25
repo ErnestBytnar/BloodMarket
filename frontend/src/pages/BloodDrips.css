@@ -1,0 +1,43 @@
+.blood-drips-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1000;
+  filter: url("#goo");
+  overflow: hidden;
+}
+
+.svg-filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.blood-drip {
+  position: absolute;
+  border-radius: 50%;
+  animation: falling 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes falling {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotate(0deg);
+  }
+  20% {
+    transform: translateX(calc(var(--random-offset) * 10px)) rotate(30deg);
+  }
+  50% {
+    transform: translateX(calc(var(--random-offset) * 20px)) rotate(60deg);
+  }
+  80% {
+    transform: translateX(calc(var(--random-offset) * 10px)) rotate(30deg);
+  }
+  100% {
+    top: 110%;
+    transform: translateX(0) rotate(0deg);
+  }
+}

@@ -1,17 +1,17 @@
-
+import React from 'react';
+import BloodDrips from './BloodDrips';
+import './WelcomePage.css';
 
 const WelcomePage = () => {
-
-    
-    return (
-        <div>
-            <h1>Strona powitalna</h1>
-                <div>
-                <p>Witaj!</p>
-                </div>
-
-        </div>
-    );
+  return (
+    <div className="welcome-page">
+      <BloodDrips />
+      <div className="welcome-content">
+        <h1>Witaj w BloodMarket</h1>
+        {/* Reszta zawartości strony */}
+      </div>
+    </div>
+  );
 };
 
 export default WelcomePage;

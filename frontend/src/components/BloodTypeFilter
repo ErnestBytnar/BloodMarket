@@ -1,0 +1,18 @@
+// components/BloodTypeFilter.jsx
+const BloodTypeFilter = ({ bloodTypes, onFilterChange }) => {
+    return (
+        <select
+            onChange={(e) => onFilterChange(e.target.value)}
+            defaultValue=""
+        >
+            <option value="">All Blood Types</option>
+            {bloodTypes.map(type => (
+                <option key={type.id} value={type.id}>
+                    {type.name} ({type.symbol})
+                </option>
+            ))}
+        </select>
+    );
+};
+
+export default BloodTypeFilter;
