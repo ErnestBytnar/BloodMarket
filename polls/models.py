@@ -39,6 +39,7 @@ class BloodOffers(models.Model):
     location = CountryField()
     expires_at = models.DateField(null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
+    image = models.ImageField(null=True,blank = True, upload_to="images/")
 
     def save(self, *args, **kwargs):
         if self.total_price and self.volume_ml:

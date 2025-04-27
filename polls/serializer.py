@@ -6,10 +6,14 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import BloodOffers,BloodTypes,BloodTransaction
 
+
+
+
 class BloodTypesSerializer(serializers.ModelSerializer):
     class Meta:
         model = BloodTypes
-        fields = '__all__'
+        fields = ['types', 'rh_factor']
+
 
 
 class CreateOfferSerializer(serializers.ModelSerializer):
@@ -19,7 +23,7 @@ class CreateOfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BloodOffers
-        fields = ['user_id', 'blood_type_id', 'volume_ml', 'total_price', 'location']
+        fields = ['user_id', 'blood_type_id', 'volume_ml', 'total_price', 'location','image']
 
     def validate_volume_ml(self,value):
         if value <= 0:
@@ -27,11 +31,10 @@ class CreateOfferSerializer(serializers.ModelSerializer):
         else:
             return value
 
-    def validate_price(self,price):
-        if price <=0:
+    def validate_total_price(self, value):
+        if value <= 0:
             raise serializers.ValidationError("Za niska cena !!")
-        else:
-            return price
+        return value
 
     def create(self,validated_data):
         user = validated_data['user_id']
@@ -39,20 +42,20 @@ class CreateOfferSerializer(serializers.ModelSerializer):
         volume = validated_data['volume_ml']
         price = validated_data['total_price']
         location = validated_data['location']
+        image = validated_data.get('image', None)
+
 
         offer = BloodOffers.objects.create(
             user_id=user,
             blood_type_id=blood_type,
             volume_ml=volume,
             total_price=price,
-            location=location
+            location=location,
+            image = image
         )
         return offer
 
-class BloodOfferSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BloodOffers
-        fields ='__all__'
+
 
 class BloodTransactionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,7 +106,12 @@ class UserSerializer(serializers.ModelSerializer):
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]
 
-
+class BloodOfferSerializer(serializers.ModelSerializer):
+    blood_type = BloodTypesSerializer(source='blood_type_id', read_only=True)
+    user = UserSerializer(source='user_id', read_only=True)
+    class Meta:
+        model = BloodOffers
+        fields ='__all__'
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

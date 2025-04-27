@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const AuthContext = createContext();
@@ -7,6 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("access_token") || null);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -20,11 +22,14 @@ export const AuthProvider = ({ children }) => {
                         },
                     });
 
-                    const userData = await response.json();
-                    if (response.ok) {
-                        setUser(userData);
+                    if (!response.ok) {
+                        throw new Error("Błąd pobierania danych użytkownika");
                     }
+
+                    const userData = await response.json();
+                    setUser(userData);
                 } catch (error) {
+                    setError(error.message);
                     console.error("Error fetching user data:", error);
                 } finally {
                     setLoading(false);
@@ -53,6 +58,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("access_token", data.access);
             setToken(data.access);
 
+            // Fetch user data after login
             const userResponse = await fetch(`${API_URL}/user/`, {
                 method: "GET",
                 headers: {
@@ -69,12 +75,20 @@ export const AuthProvider = ({ children }) => {
             return true;
         } catch (error) {
             console.error("Login error:", error);
+            setError(error.message);
             throw error;
         }
     };
 
+    const logout = () => {
+        localStorage.removeItem("access_token");
+        setToken(null);
+        setUser(null);
+        window.location.href = "/login";
+    };
+
     return (
-        <AuthContext.Provider value={{ token, user, loading, login }}>
+        <AuthContext.Provider value={{ token, user, loading, error, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
