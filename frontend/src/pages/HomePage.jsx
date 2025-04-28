@@ -25,7 +25,7 @@ const HomePage = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-             setUsername(response.data.username);
+
                 console.log('Fetched products:', response.data);
                 setProducts(response.data);
             } catch (error) {

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 from django_ratelimit.decorators import ratelimit
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -18,6 +18,7 @@ from .models import BloodTypes,BloodTransaction,BloodOffers
 from. forms import BloodOffersForm,TypesForm,TransactionForm
 from .search_filter import BloodOffersFilter
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 def test_dummy_home(request):
@@ -105,6 +106,7 @@ def get_single_transaction(request, pk):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@parser_classes([MultiPartParser, FormParser])
 def create_offer(request):
     serializer = CreateOfferSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
