@@ -12,7 +12,7 @@ from .models import BloodOffers,BloodTypes,BloodTransaction
 class BloodTypesSerializer(serializers.ModelSerializer):
     class Meta:
         model = BloodTypes
-        fields = ['types', 'rh_factor']
+        fields = '__all__'
 
 
 

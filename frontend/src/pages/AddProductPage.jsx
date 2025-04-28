@@ -25,6 +25,7 @@ const AddOfferPage = () => {
 
                 // Pobierz grupy krwi
                 const bloodTypesResponse = await axios.get('http://127.0.0.1:8000/api/blood-types/');
+                console.log('bloodTypesResponse', bloodTypesResponse.data); // debug
                 setBloodTypes(bloodTypesResponse.data);
 
                 // Pobierz dane użytkownika
@@ -55,7 +56,7 @@ const AddOfferPage = () => {
 
             const formData = new FormData();
             formData.append('user_id', userId);
-            formData.append('blood_type_id', bloodTypeId);
+            formData.append('blood_type_id', Number(bloodTypeId)); // <-- KONWERSJA NA LICZBĘ TUTAJ
             formData.append('volume_ml', volume);
             formData.append('total_price', price);
             formData.append('location', location);
