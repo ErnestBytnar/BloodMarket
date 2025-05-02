@@ -1,0 +1,18 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+    background-color: red;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+
+nav a, nav button {
+    color: white;
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
