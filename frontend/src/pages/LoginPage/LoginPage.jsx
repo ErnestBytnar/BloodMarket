@@ -1,49 +1,96 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 import styles from './Login.module.css';
 
 
-const Login = () => {
-    const navigate = useNavigate();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+const LoginPage = () => {
+    const navigate = useNavigate();  
+    const { login } = useContext(AuthContext);
+
+    const [error, setError]=useState(null);
+    const [form,setForm]=useState({
+        username: '',
+        password: '',
+      });
+
+
+      const updateField = e =>{
+        setForm({
+          ...form,
+          [e.target.name]: e.target.value
+        })
+    
+      }
+
+
+      const validate = form =>{
+    
+        if(!form.username){
+          return "Nazwa jest wymagana";
+        }
+        else if(!/^[a-zA-Z0-9._-]{2,20}$/i.test(form.username))
+          return "Dane są nieprawidłowe";
+    
+        if(!form.password){
+          return "Hasło jest wymagane";
+        }
+        else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i.test(form.password)){
+          return "Dane są nieprawidłowe";
+        }
+    
+    
+        return null;
+        
+      }
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/api/token/', {
-                username,
-                password
-            });
-            localStorage.setItem('access_token', response.data.access);
-            localStorage.setItem('refresh_token', response.data.refresh);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-            navigate('/dashboard');
-        } catch (err) {
-            setError('Nieprawidłowe dane logowania');
-        }
+        const errorMsg = validate(form);
+        if(errorMsg){
+            setError(errorMsg);
+            return; 
+          }
+
+          try{
+            await login(
+                form.username,
+                form.password);
+                const event = new Event("authChange");
+                window.dispatchEvent(event)
+                navigate("/dashboard");
+          }
+          catch(error){
+            if (error.response && error.response.status === 429) {
+              setError(error.response.data.error || "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.");
+          } else {
+              setError("Niepoprawne dane.");
+          }
+
     };
+  };
 
     return (
         <div className={styles.container}>
             <form onSubmit={handleLogin} className={styles.form}>
                 <h2 className={styles.title}>BloodMarket</h2>
                 <input
+                    id="username"
+                    name="username"
                     type="text"
-                    placeholder="Login"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Nazwa użytkownika"
+                    value={form.username}
+                    onChange={updateField}
                     className={styles.input}
                     required
                 />
                 <input
+                    id="password"
+                    name="password"
                     type="password"
                     placeholder="Hasło"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={form.password}
+                    onChange={updateField}
                     className={styles.input}
                     required
                 />
@@ -58,4 +105,4 @@ const Login = () => {
 };
 
 
-export default Login;
+export default LoginPage;

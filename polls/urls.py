@@ -16,7 +16,7 @@ urlpatterns = [
 
     # User
     path('user/', get_user_data, name='user-data'),
-    path('user/register/', register_user, name='register-user'),
+    path('register/', register_user, name='register_user'),
 
     # Blood Offers
     path('offers/', get_data_from_blood_offers, name='offer-list'),
