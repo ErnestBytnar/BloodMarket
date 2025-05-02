@@ -44,7 +44,7 @@ const Navbar = () => {
             <div>
                 {isAuthenticated ? (
                     <>
-                    <Link to="/main">Strona główna</Link>
+                    <Link to="/dashboard">Strona główna</Link>
                     {user && user.groups?.includes("Admin") && (
                             <Link to="/admin">Panel Administratora</Link>
                         )}
