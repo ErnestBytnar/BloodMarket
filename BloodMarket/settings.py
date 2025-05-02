@@ -100,7 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'blood_market',
         'USER': 'postgres',
-        'PASSWORD': 'Gt56@@.123pp',
+        'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -2,7 +2,7 @@
 __pycache__/
 polls/__pycache__/
 BloodMarket/__pycache__/
-
+BloodMarket/settings.py
 
 # Ignorowanie plików .pyc, .pyo, .pyd
 *.pyc
