@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
+from django.utils.timezone import now
 from django_filters.rest_framework import DjangoFilterBackend
 from django_ratelimit.decorators import ratelimit
 from rest_framework.decorators import api_view, permission_classes, parser_classes
@@ -14,11 +15,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer,MakeTransactionSerializer,CreateOfferSerializer,BloodTypesSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import BloodTypes,BloodTransaction,BloodOffers
+from .models import BloodTypes, BloodTransaction, BloodOffers
 from. forms import BloodOffersForm,TypesForm,TransactionForm
 from .search_filter import BloodOffersFilter
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
+
+from .utils import log_account_event
 
 
 def test_dummy_home(request):
@@ -178,7 +181,30 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-        if getattr(request, 'limited', False):
-            return JsonResponse({"error": "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę."}, status=429)
-        return super().post(request, *args, **kwargs)
+        username = request.data.get('username')
+        user = User.objects.filter(username=username).first()
 
+        if getattr(request, 'limited', False):
+            log_account_event(
+                request,
+                event_type="LOGIN_FAIL",
+                user=user,
+                success=False,
+                details="Rate limit exceeded"
+            )
+            return JsonResponse({"error": "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę."}, status=429)
+
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200 and user:
+            log_account_event(request, event_type="LOGIN_SUCCESS", user=user)
+        else:
+            log_account_event(
+                request,
+                event_type="LOGIN_FAIL",
+                user=user,
+                success=False,
+                details="Błędne dane logowania"
+            )
+
+        return response

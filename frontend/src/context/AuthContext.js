@@ -47,9 +47,11 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error("Błąd logowania");
+                const error = new Error(data.detail || "Za dużo prób logowania");
+                error.status = response.status;
+                error.data = data;
+                throw error;
             }
-
             localStorage.setItem("access_token", data.access);
             setToken(data.access);
 

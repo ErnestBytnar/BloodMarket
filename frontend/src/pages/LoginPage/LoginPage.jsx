@@ -59,13 +59,12 @@ const LoginPage = () => {
                 const event = new Event("authChange");
                 window.dispatchEvent(event)
                 navigate("/dashboard");
-          }
-          catch(error){
-            if (error.response && error.response.status === 429) {
-              setError(error.response.data.error || "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.");
-          } else {
-              setError("Niepoprawne dane.");
-          }
+              } catch (error) {
+                if (error.status === 429) {
+                    setError(error.data?.detail || "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.");
+                } else {
+                    setError("Niepoprawne dane.");
+                }
 
     };
   };
