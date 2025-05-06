@@ -17,6 +17,7 @@
     pip install psycopg2
     pip install django-ratelimit
     pip install django-countries
+    pip install python-decouple
 
 ### Frontend (React)
 
@@ -42,3 +43,15 @@
 
 <img width="955" alt="Zrzut ekranu 2025-04-19 o 22 46 47" src="https://github.com/user-attachments/assets/1dfe5dc4-4215-4917-b715-75e8c079999d" />
 
+
+
+## Zabezpieczenia
+- Walidacje danych na frontendzie
+- Walidacja danych na backendzie
+- Login rate limit
+- Logowanie z tokenem JWT
+- Podział na role
+- Zapisywanie logów udanych i nieudanych zalogowań
+- Hashowanie haseł
+- CORS
+- Wygasanie tokenu JWT
