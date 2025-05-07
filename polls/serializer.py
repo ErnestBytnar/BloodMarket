@@ -4,9 +4,13 @@ from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import BloodOffers,BloodTypes,BloodTransaction
+from .models import BloodOffers,BloodTypes,BloodTransaction,UserProfile
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['avatar']
 
 
 class BloodTypesSerializer(serializers.ModelSerializer):

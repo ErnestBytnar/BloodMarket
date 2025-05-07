@@ -11,7 +11,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer,MakeTransactionSerializer,CreateOfferSerializer,BloodTypesSerializer
+from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer,MakeTransactionSerializer,CreateOfferSerializer,BloodTypesSerializer,UserProfileSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import BloodTypes,BloodTransaction,BloodOffers
@@ -48,6 +48,23 @@ def test_dummy_home(request):
 
     return render(request,'home.html',context)
 
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    profile = request.user.userprofile
+
+    if request.method == 'GET':
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+
 #po 7 dniach oferty avaible = False
 def get_queryset(self):
     cutoff = timezone.now() - timedelta(days=7)
@@ -55,9 +72,32 @@ def get_queryset(self):
     return BloodOffers.objects.all()
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_dashboard(request):
+    user = request.user
+
+    # Wystawione oferty
+    user_offers = BloodOffers.objects.filter(user_id=user)
+    user_offers_serializer = BloodOfferSerializer(user_offers, many=True)
+
+    # Kupione oferty (transakcje)
+    user_transactions = BloodTransaction.objects.filter(buyer_id=user)
+    user_transactions_serializer = BloodTransactionSerializer(user_transactions, many=True)
+
+    # Dane użytkownika
+    user_data = UserSerializer(user).data
+
+    return Response({
+        "user_data": user_data,
+        "my_offers": user_offers_serializer.data,
+        "my_purchases": user_transactions_serializer.data
+    })
+
+
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 #@permission_classes([IsAuthenticated])
 def show_blood_types(request):
     offers = BloodTypes.objects.all()
@@ -65,7 +105,7 @@ def show_blood_types(request):
     return Response(serializer.data)
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_single_blood_type(request,pk):
     offers = BloodTypes.objects.all()
     serializer = BloodTypesSerializer(offers)
@@ -73,7 +113,7 @@ def get_single_blood_type(request,pk):
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_sorted_offers(request):
     sort_by = request.GET.get('sort_by', 'id')       # np. 'total_price', 'volume_ml'
     order = request.GET.get('order', 'asc')          # 'asc' lub 'desc'
@@ -90,14 +130,14 @@ def get_sorted_offers(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_single_offer(request, pk):
     offer = get_object_or_404(BloodOffers, pk=pk)
     serializer = BloodOfferSerializer(offer)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_single_transaction(request, pk):
     transaction = get_object_or_404(BloodTransaction, pk=pk)
     serializer = BloodTransactionSerializer(transaction)
@@ -105,7 +145,7 @@ def get_single_transaction(request, pk):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def create_offer(request):
     serializer = CreateOfferSerializer(data=request.data)
@@ -118,7 +158,7 @@ def create_offer(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_data_from_blood_transactions(request):
     blood_offers = BloodTransaction.objects.all()
     serializer = BloodTransactionSerializer(blood_offers,many=True)
@@ -126,7 +166,7 @@ def get_data_from_blood_transactions(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 
 def get_data_from_blood_offers(request):
     blood_offers = BloodOffersFilter(request.GET,queryset=BloodOffers.objects.all())
@@ -142,7 +182,7 @@ def get_data_from_blood_offers(request):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def make_transaction(request):
     serializer = MakeTransactionSerializer(data=request.data)
 

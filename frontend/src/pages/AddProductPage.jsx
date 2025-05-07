@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+
 
 const AddOfferPage = () => {
     const navigate = useNavigate();
@@ -8,11 +10,15 @@ const AddOfferPage = () => {
     const [bloodTypeId, setBloodTypeId] = useState('');
     const [volume, setVolume] = useState('');
     const [price, setPrice] = useState('');
-    const [location, setLocation] = useState('');
+    const [location, setLocation] = useState('null');
     const [image, setImage] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [userId, setUserId] = useState(null);
+    const [countries, setCountries] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,6 +48,25 @@ const AddOfferPage = () => {
         fetchData();
     }, [navigate]);
 
+    useEffect(() => {
+    const fetchCountries = async () => {
+        try {
+            const response = await fetch(
+                "https://valid.layercode.workers.dev/list/countries?format=select&flags=true&value=code"
+            );
+            const data = await response.json();
+            setCountries(data.countries);
+            setSelectedCountry(data.userSelectValue);
+        } catch (error) {
+            console.error('Error fetching countries:', error);
+        }
+    };
+
+    fetchCountries();
+}, []);
+
+
+
     const handleAddOffer = async (e) => {
         e.preventDefault();
         setError('');
@@ -59,7 +84,7 @@ const AddOfferPage = () => {
             formData.append('blood_type_id', Number(bloodTypeId)); // <-- KONWERSJA NA LICZBĘ TUTAJ
             formData.append('volume_ml', volume);
             formData.append('total_price', price);
-            formData.append('location', location);
+            formData.append('location', location.value);
             if (image) {
                 formData.append('image', image);
             }
@@ -119,14 +144,39 @@ const AddOfferPage = () => {
                     step="0.01"
                 />
 
-                <input
-                    type="text"
-                    placeholder="Lokalizacja"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    style={styles.input}
-                    required
-                />
+              <Select
+    options={countries}
+    value={location}
+    onChange={(selectedOption) => setLocation(selectedOption)}
+    placeholder="Wybierz kraj"
+    styles={{
+        control: (base) => ({
+            ...base,
+            backgroundColor: '#333',
+            borderColor: '#555',
+            color: 'white',
+            marginBottom: '15px',
+        }),
+        singleValue: (base) => ({
+            ...base,
+            color: 'white',
+        }),
+        menu: (base) => ({
+            ...base,
+            backgroundColor: '#1a1a1a',
+            color: 'white',
+        }),
+        option: (base, { isFocused }) => ({
+            ...base,
+            backgroundColor: isFocused ? '#555' : '#1a1a1a',
+            color: 'white',
+        }),
+    }}
+    required
+/>
+
+
+
 
                 <input
                     type="file"
@@ -141,6 +191,10 @@ const AddOfferPage = () => {
                 <button type="submit" style={styles.button}>
                     Dodaj ofertę
                 </button>
+
+
+
+
             </form>
         </div>
     );

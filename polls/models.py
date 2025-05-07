@@ -5,6 +5,18 @@ from django_countries.fields import CountryField
 from django.db import models
 
 # Create your models here.
+
+def user_profile_path(instance, filename):
+    return f'user_{instance.user.id}/profile/{filename}'
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to=user_profile_path, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
 class BloodTypes(models.Model):
     blood_types = (("0", "0"), ("A", "A"), ("B", "B"), ("AB", "AB"))
     rh_types = (("Rh +", "Rh +"), ("Rh -", "Rh -"))

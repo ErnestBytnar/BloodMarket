@@ -54,14 +54,12 @@ const HomePage = () => {
         navigate('/login');
     }
 };
-
-
         fetchProducts();
         fetchUser();
     }, [navigate]);
 
     const handleAddProduct = () => {
-        navigate('/add-product');
+        navigate('/add');
     };
 
    const handleBuyProduct = async (offerId) => {
@@ -94,9 +92,6 @@ const HomePage = () => {
     }
 
 };
-
-
-
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -160,29 +155,45 @@ const HomePage = () => {
                 <button onClick={handleAddProduct} style={styles.addButton}>
                     Dodaj ofertę
                 </button>
+                <button onClick={() => navigate('/user')} style={styles.profileButton}>
+    Mój profil
+</button>
+
             </div>
 
             <h2 style={styles.subtitle}>Dostępne oferty:</h2>
 
             <div style={styles.grid}>
                 {currentProducts.length > 0 ? (
-                    currentProducts.map(product => (
-                        <div key={product.id} style={styles.card}>
-                            <h3 style={styles.productName}>{product.user?.username || 'Anonim'}</h3>
-                            <p style={styles.productBlood}>
-                                Grupa: {product.blood_type ? `${product.blood_type.types} ${product.blood_type.rh_factor}` : 'Nieznana'}
-                            </p>
-                            <p style={styles.productLocation}>Lokalizacja: {product.location}</p>
-                            <p style={styles.productPrice}>{product.total_price} PLN</p>
-                            <p style={styles.productDescription}>Data dodania: {formatDate(product.created_at)}</p>
-                            <button onClick={() => handleBuyProduct(product.id)} style={styles.buyButton}>
-                                Kup
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                    <p style={styles.noResults}>Brak wyników.</p>
-                )}
+    currentProducts.map(product => (
+        <div key={product.id} style={styles.card}>
+            <h3 style={styles.productName}>{product.user?.username || 'Anonim'}</h3>
+            <p style={styles.productBlood}>
+                Grupa: {product.blood_type ? `${product.blood_type.types} ${product.blood_type.rh_factor}` : 'Nieznana'}
+            </p>
+            <p style={styles.productLocation}>Lokalizacja: {product.location}</p>
+            <p style={styles.productPrice}>{product.total_price} PLN</p>
+            <p style={styles.productPrice}>Cena za 100ml: {product.price_per_100ml} PLN</p>
+            <p style={styles.productPrice}>Ilość krwi: {product.volume_ml} ml</p>
+
+            <p style={styles.productDescription}>Data dodania: {formatDate(product.created_at)}</p>
+
+            {/* Nowy przycisk "Zobacz zdjęcie" */}
+            <button onClick={() => navigate(`/image/${product.id}`)} style={styles.imageButton}>
+                Zobacz zdjęcie
+            </button>
+
+            {/* Przycisk Kup */}
+            <button onClick={() => handleBuyProduct(product.id)} style={styles.buyButton}>
+                Kup
+            </button>
+        </div>
+
+    ))
+) : (
+    <p style={styles.noResults}>Brak wyników.</p>
+)}
+
             </div>
 
             <div style={styles.pagination}>
@@ -199,9 +210,29 @@ const HomePage = () => {
                     </button>
                 ))}
             </div>
+
+            {/* Przeniesienie legendy poniżej ofert */}
+            <div style={styles.legendBox}>
+                <h2 style={styles.legendTitle}>Legenda BloodMarket</h2>
+                <p style={styles.legendText}>
+                    Dawno, dawno temu, kiedy Internet był jeszcze młody i pełen dzikich łąk HTML-a, powstała legenda o ukrytym targowisku — miejscu, gdzie puls życia płynął w kablach, a nie w żyłach.<br /><br />
+                    Mówiono o BloodMarket — zakątku stworzonym dla tych, którzy wiedzą, że prawdziwe skarby nie świecą złotem, lecz kapie z nich ciepła czerwień.<br /><br />
+                    Powtarzano szepty na forach, w linijkach kodu i zapomnianych IRC-ach:<br /><br />
+                    <i>"Gdzie algorytm znajdzie twoją grupę krwi, tam twoja potrzeba zostanie zaspokojona."</i><br /><br />
+                    BloodMarket nie ma adresu. BloodMarket jest w twojej sieci.<br />
+                    Jeden klik, jedno hasło, jeden impuls.<br /><br />
+                    Tu kupisz RH- szybciej niż pizzę i AB+ z dostawą dronem (gdybyśmy mieli drony).<br /><br />
+                    Szukasz O+ dla ulubionego golemicznego rytuału? A może potrzebujesz B- na jutrzejszy cosplay nekromanty?<br /><br />
+                    BloodMarket — bo nie wszystko da się kupić w aptece.<br /><br />
+                    <b>Pamiętaj:</b><br />
+                    <i>"Na BloodMarket nie przychodzisz z pustymi żyłami."</i><br /><br />
+                    <small>(Uwaga: Wszelkie płyny dostępne na BloodMarket to certyfikowane mieszanki smakowe zgodne z lokalnymi przepisami prawa. Zakazane przez nudziarzy.)</small>
+                </p>
+            </div>
         </div>
     );
 };
+
 
 const styles = {
     container: {
@@ -248,7 +279,7 @@ const styles = {
         color: 'white',
         fontWeight: 'bold',
         cursor: 'pointer',
-        marginTop: '10px',
+
     },
     subtitle: {
         color: '#ff4d4d',
@@ -316,7 +347,58 @@ const styles = {
         color: 'white',
         fontWeight: 'bold',
         cursor: 'pointer',
-    }
+    },
+
+imageButton: {
+    marginTop: '10px',
+    marginBottom: '10px',
+    backgroundColor: '#333',
+    border: '1px solid #ff0000',
+    padding: '8px 12px',
+    borderRadius: '4px',
+    color: 'white',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+},
+legendBox: {
+    backgroundColor: '#1a1a1a',
+    border: '2px solid #ff0000',
+    borderRadius: '10px',
+    padding: '30px',
+    marginTop: '30px',
+    marginBottom: '30px',
+    boxShadow: '0 0 15px #ff0000',
+    color: '#e6e6e6',
+    fontSize: '16px',
+    lineHeight: '1.6',
+},
+
+legendTitle: {
+    color: '#ff4d4d',
+    fontSize: '28px',
+    marginBottom: '20px',
+    textAlign: 'center',
+},
+
+legendText: {
+    textAlign: 'justify',
+    whiteSpace: 'pre-line',
+},
+profileButton: {
+    backgroundColor: '#262626',
+    border: '1px solid #ff0000',
+    padding: '10px 20px',
+    borderRadius: '4px',
+    color: 'white',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+
+    marginLeft: '10px',
+
+}
+
+
+
 };
 
 export default HomePage;
