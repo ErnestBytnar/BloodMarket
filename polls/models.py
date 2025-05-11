@@ -6,6 +6,24 @@ from django.db import models
 
 # Create your models here.
 
+class AccountEvent(models.Model):
+    EVENT_TYPES = [
+        ('LOGIN_SUCCESS', 'Login Success'),
+        ('LOGIN_FAIL', 'Login Failed'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    event_type = models.CharField(max_length=20, choices=EVENT_TYPES)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(null=True, blank=True)
+    success = models.BooleanField(default=True)
+    details = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.timestamp} | {self.user} | {self.event_type}"
+
+
 def user_profile_path(instance, filename):
     return f'user_{instance.user.id}/profile/{filename}'
 

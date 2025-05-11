@@ -1,0 +1,44 @@
+.container {
+    background-color: #0d0d0d;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    color: white;
+    font-family: monospace;
+}
+
+.image {
+    max-width: 90%;
+    max-height: 80vh;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 2px solid #ff0000;
+}
+
+.backButton {
+    background-color: #ff0000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.noImage {
+    margin-top: 20px;
+    color: #ccc;
+}
+
+.errorMessage {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}

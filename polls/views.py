@@ -19,6 +19,9 @@ from. forms import BloodOffersForm,TypesForm,TransactionForm
 from .search_filter import BloodOffersFilter
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.utils.timezone import now
+from .utils import log_account_event
+
 
 
 def test_dummy_home(request):

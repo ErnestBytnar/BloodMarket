@@ -8,33 +8,32 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("access_token") || null);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
-            if (token) {
-                try {
-                    const response = await fetch(`${API_URL}/user/`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
+            if (!token) {
+                setLoading(false);
+                return;
+            }
 
-                    if (!response.ok) {
-                        throw new Error("Błąd pobierania danych użytkownika");
-                    }
+            try {
+                const response = await fetch(`${API_URL}/user/`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
+                if (response.ok) {
                     const userData = await response.json();
                     setUser(userData);
-                } catch (error) {
-                    setError(error.message);
-                    console.error("Error fetching user data:", error);
-                } finally {
-                    setLoading(false);
+                } else {
+                    console.warn("Błąd autoryzacji:", response.status);
                 }
-            } else {
+            } catch (error) {
+                console.error("Błąd pobierania użytkownika:", error);
+            } finally {
                 setLoading(false);
             }
         };
@@ -51,14 +50,19 @@ export const AuthProvider = ({ children }) => {
             });
 
             const data = await response.json();
+
             if (!response.ok) {
-                throw new Error("Błąd logowania");
+                const error = new Error(data.detail || "Za dużo prób logowania");
+                error.status = response.status;
+                error.data = data;
+                throw error;
             }
 
             localStorage.setItem("access_token", data.access);
+            localStorage.setItem("refresh", data.refresh);
             setToken(data.access);
 
-            // Fetch user data after login
+            // Natychmiastowe pobranie użytkownika
             const userResponse = await fetch(`${API_URL}/user/`, {
                 method: "GET",
                 headers: {
@@ -67,33 +71,31 @@ export const AuthProvider = ({ children }) => {
                 },
             });
 
-            const userData = await userResponse.json();
             if (userResponse.ok) {
+                const userData = await userResponse.json();
                 setUser(userData);
             }
 
             return true;
         } catch (error) {
-            console.error("Login error:", error);
-            setError(error.message);
+            console.error("Błąd logowania:", error);
             throw error;
         }
     };
 
     const logout = () => {
         localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh");
         setToken(null);
         setUser(null);
         window.location.href = "/login";
     };
 
     return (
-        <AuthContext.Provider value={{ token, user, loading, error, login, logout }}>
+        <AuthContext.Provider value={{ token, user, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
