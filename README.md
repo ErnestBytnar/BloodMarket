@@ -17,6 +17,7 @@
     pip install psycopg2
     pip install django-ratelimit
     pip install django-countries
+    pip install python-decouple
 
 ### Frontend (React)
 
