@@ -6,7 +6,7 @@ from django.urls import path
 
 from .views import get_user_data, register_user, CustomTokenObtainPairView, test_dummy_home, get_data_from_blood_offers, \
     get_data_from_blood_transactions, make_transaction, create_offer, show_blood_types, get_sorted_offers, \
-    get_single_offer, get_single_transaction,get_single_blood_type,user_dashboard,user_profile
+    get_single_offer, get_single_transaction,get_single_blood_type,user_dashboard,user_profile,get_all_users
 
 urlpatterns = [
 
@@ -17,6 +17,7 @@ urlpatterns = [
     # User
     path('user/', get_user_data, name='user-data'),
     path('register/', register_user, name='register_user'),
+    path('users/', get_all_users, name='get_all_users'),
 
     # Blood Offers
     path('offers/', get_data_from_blood_offers, name='offer-list'),

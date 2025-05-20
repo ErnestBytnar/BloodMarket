@@ -13,7 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializer import UserSerializer, UserRegisterSerializer, CustomTokenObtainPairSerializer,BloodOfferSerializer,BloodTransactionSerializer,MakeTransactionSerializer,CreateOfferSerializer,BloodTypesSerializer,UserProfileSerializer
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .models import BloodTypes,BloodTransaction,BloodOffers
 from. forms import BloodOffersForm,TypesForm,TransactionForm
 from .search_filter import BloodOffersFilter
@@ -204,6 +204,14 @@ def get_user_data(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_all_users(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
