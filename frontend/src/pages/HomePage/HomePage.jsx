@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styles from './HomePage.module.css';
+import { logout } from "../../api/auth";
+import { useAuth } from "./../../context/AuthContext";
 
 const HomePage = () => {
     const [products, setProducts] = useState([]);
@@ -134,6 +136,43 @@ const HomePage = () => {
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
+
+
+    const { user } = useAuth();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkAuth = () => {
+            const token = localStorage.getItem("access_token");
+            setIsAuthenticated(!!token);
+        };
+
+                const handleAuthChange = () => {
+                    checkAuth();
+                };
+
+
+        checkAuth();
+
+        window.addEventListener("authChange", handleAuthChange);
+
+        return () => {
+            window.removeEventListener("storage", checkAuth);
+        };
+    }, []);
+    const handleLogout = () =>{
+        logout();
+        localStorage.removeItem("access_token");
+        setIsAuthenticated(false);
+
+        const event = new Event("authChange");
+        window.dispatchEvent(event);
+    };
+
+
+
+
+
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>
@@ -176,6 +215,7 @@ const HomePage = () => {
                 <button onClick={() => navigate('/user')} className={styles.profileButton}>
                     Mój profil
                 </button>
+                <button onClick={handleLogout} className={styles.profileButton}>Wyloguj się</button>
             </div>
 
             <h2 className={styles.subtitle}>Dostępne oferty:</h2>

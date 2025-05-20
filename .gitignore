@@ -63,7 +63,7 @@ docker-compose.yml
 Dockerfile
 
 # Python virtual environments (niepotrzebne, jeśli używasz .venv)
-
+polls/migrations/
 polls/migrations/__pycache__/0002_delete_note.cpython-310.pyc
 polls/migrations/__pycache__/__init__.cpython-310.pyc
 

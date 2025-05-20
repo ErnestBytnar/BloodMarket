@@ -27,21 +27,38 @@ const RegisterPage = () => {
         });
     };
 
-    const validate = (form) => {
-        if (!form.email) return "Email jest wymagany";
-        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(form.email)) return "Nieprawidłowy adres email";
-
-        if (!form.username) return "Nazwa jest wymagana";
-        if (!/^[a-zA-Z0-9._-]{2,20}$/i.test(form.username)) return "Niepoprawna nazwa użytkownika";
-
-        if (!form.password) return "Hasło jest wymagane";
-        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/i.test(form.password)) return "Niepoprawne hasło";
-
-        if (!form.passwordRep) return "Powtórz hasło";
-        if (form.password !== form.passwordRep) return "Hasła nie są takie same";
-
-        return null;
-    };
+     const validate = form =>{
+      if(!form.email){
+        return "Email jest wymagany";
+      }
+      else if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(form.email)){
+        return "Nieprawidłowy adres email";
+      }
+  
+      if(!form.username){
+        return "Nazwa jest wymagana";
+      }
+      else if(!/^[a-zA-Z0-9._-]{2,20}$/i.test(form.username))
+        return "Niepoprawna nazwa użytkownika";
+  
+      if(!form.password){
+        return "Hasło jest wymagane";
+      }
+      else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i.test(form.password)){
+        return "Hasło musi zawierać co najmniej 8 znaków, jedną dużą literę, jedną małą literę, jedną cyfrę i jeden znak specjalny";
+      }
+  
+      if(!form.passwordRep){
+        return "Powtórz hasło";
+      }
+      
+      if(form.password !== form.passwordRep){
+        return "Hasła nie są takie same";
+      }
+  
+      return null;
+      
+    }
 
     const handleRegister = async (e) => {
         e.preventDefault();

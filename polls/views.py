@@ -221,7 +221,31 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        user = User.objects.filter(username=username).first()
+
         if getattr(request, 'limited', False):
+            log_account_event(
+                request,
+                event_type="LOGIN_FAIL",
+                user=user,
+                success=False,
+                details="Rate limit exceeded"
+            )
             return JsonResponse({"error": "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę."}, status=429)
-        return super().post(request, *args, **kwargs)
+
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200 and user:
+            log_account_event(request, event_type="LOGIN_SUCCESS", user=user)
+        else:
+            log_account_event(
+                request,
+                event_type="LOGIN_FAIL",
+                user=user,
+                success=False,
+                details="Błędne dane logowania"
+            )
+
+        return response
 

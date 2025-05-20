@@ -1,0 +1,10 @@
+django
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
+psycopg2
+django-ratelimit
+django-countries
+python-decouple
+django-filter
+pillow
