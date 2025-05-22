@@ -13,12 +13,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoggedRoute from "./components/LoggedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AdminPage from "./pages/AdminPage/AdminPage";
+import ChatWrapper from"./pages/PrivateChat/PrivateChat";
 
 const App = () => {
     return (
         <AuthProvider>
             <Router>
                 <Routes>
+                    <Route path="/chat/:receiver" element={<PrivateChat />} />
                     <Route path="/login" element={<LoggedRoute><LoginPage /></LoggedRoute>} />
                     <Route path="/register" element={<LoggedRoute><RegisterPage /> </LoggedRoute>} />
                     <Route path="/dashboard" element={<ProtectedRoute><HomePage /></ProtectedRoute>}/>
@@ -26,8 +28,9 @@ const App = () => {
                     <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>}/>
 
                     <Route path="/image/:id" element={<ProtectedRoute><ImagePage /></ProtectedRoute>} />
-                     <Route path="/chat" element={<ProtectedRoute><PrivateChat /></ProtectedRoute>} />
+
                      <Route path="/user" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+
                 </Routes>
             </Router>
         </AuthProvider>

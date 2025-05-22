@@ -77,7 +77,8 @@ const HomePage = () => {
         navigate('/add');
     };
 
-    const handleBuyProduct = async (offerId) => {
+    /*
+     const handleBuyProduct = async (offerId) => {
         try {
             const token = localStorage.getItem('access_token');
             const userRes = await axios.get('http://127.0.0.1:8000/api/user/', {
@@ -102,6 +103,46 @@ const HomePage = () => {
             alert('Nie udało się kupić oferty.');
         }
     };
+    */
+
+   const handleBuyProduct = async (offerId) => {
+  try {
+    const token = localStorage.getItem('access_token');
+    const offer = products.find(p => p.id === offerId);
+    if (!offer) {
+      alert('Oferta nie znaleziona');
+      return;
+    }
+
+    // Zakładam, że w offer masz user_id jako obiekt albo przynajmniej jego id
+    const otherUserId = offer.user_id?.id || offer.user_id;
+
+    const response = await axios.post(
+      'http://127.0.0.1:8000/api/privatechat/create_or_get_private_chat/',
+      { other_user_id: otherUserId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    const chatId = response.data.chat_id;
+    if (chatId) {
+      window.open(`/chat/${chatId}`, '_blank');
+    } else {
+      alert('Nie udało się utworzyć czatu');
+    }
+  } catch (error) {
+    console.error('Błąd podczas tworzenia czatu:', error);
+    alert('Błąd podczas tworzenia czatu');
+  }
+};
+
+
+
+
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };

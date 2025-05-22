@@ -18,10 +18,13 @@
     pip install django-ratelimit
     pip install django-countries
     pip install python-decouple
+    pip install channels==4.0.0 daphne==4.0.0
 
 ### Frontend (React)
 
     npm install react-router-dom
+    npm install jwt-decode
+
 
 ## Endpointy
 

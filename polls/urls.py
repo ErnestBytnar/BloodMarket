@@ -6,7 +6,7 @@ from django.urls import path
 
 from .views import get_user_data, register_user, CustomTokenObtainPairView, test_dummy_home, get_data_from_blood_offers, \
     get_data_from_blood_transactions, make_transaction, create_offer, show_blood_types, get_sorted_offers, \
-    get_single_offer, get_single_transaction,get_single_blood_type,user_dashboard,user_profile
+    get_single_offer, get_single_transaction,get_single_blood_type,user_dashboard,user_profile,get_chat_room,get_chat_overview,send_message,create_or_get_private_chat
 
 urlpatterns = [
 
@@ -34,6 +34,10 @@ urlpatterns = [
     #path('user/', user_dashboard, name='user-dashboard'),
     path('profile/', user_profile, name='user_profile'),
 
+    path('chat/<str:room_name>/', get_chat_room, name='chat-room'),
+    path('chat/', get_chat_overview, name='get_chat_overview'),
+    path('send_message/', send_message, name='send-message'),
+    path('privatechat/create_or_get_private_chat/',create_or_get_private_chat,name='get'),
     # Home
     path('', test_dummy_home, name='home'),
 ]

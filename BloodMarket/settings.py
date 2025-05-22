@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,9 +45,18 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'polls',
+    'channels',
+
 
 
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -69,6 +79,10 @@ REST_FRAMEWORK = {
     ]
 
 }
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
+
 
 ROOT_URLCONF = 'BloodMarket.urls'
 
@@ -88,8 +102,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'BloodMarket.wsgi.application'
 
+ASGI_APPLICATION = 'BloodMarket.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

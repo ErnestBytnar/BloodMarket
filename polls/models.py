@@ -77,10 +77,18 @@ class BloodOffers(models.Model):
         super().save(*args, **kwargs)
 
 
-class PrivateMessage(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    transaction = models.ForeignKey(BloodTransaction, on_delete=models.CASCADE)
-    body = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
+class Message(models.Model):
+    sender = models.ForeignKey(User, related_name="sent_messages", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.sender} -> {self.receiver}: {self.content[:20]}"
 
+class Chat(models.Model):
+    participants = models.ManyToManyField(User, related_name='chats')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Chat {self.id} between {', '.join([user.username for user in self.participants.all()])}"
