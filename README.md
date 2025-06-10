@@ -5,7 +5,7 @@
 - Django 5.1.7
 - Rest Framework 3.15.2
 - React 19.0.0
-- PostgreSQL 15.2
+- PostgreSQL 15.2  
 
 
 ### Backend (Python)

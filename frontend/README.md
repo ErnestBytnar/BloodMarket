@@ -2,7 +2,8 @@
 
 npm install react@18.2.0 react-dom@18.2.0
 npm install react-country-dropdown --legacy-peer-deps
-npm install react-router-dom
+npm install react-router-dom@6
+npm install --save-dev @testing-library/react @testing-library/jest-dom
 
 
 ## Przykład pliku .env
