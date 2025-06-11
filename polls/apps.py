@@ -29,3 +29,7 @@ class PollsConfig(AppConfig):
                 pass
 
         post_migrate.connect(create_groups, sender=self)
+
+    def ready1(self):
+        import polls.signals
+

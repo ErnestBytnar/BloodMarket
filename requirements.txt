@@ -2,7 +2,7 @@ django
 djangorestframework
 django-cors-headers
 djangorestframework-simplejwt
-psycopg2
+psycopg2-binary
 django-ratelimit
 django-countries
 python-decouple
