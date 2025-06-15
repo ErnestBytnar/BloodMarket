@@ -65,9 +65,12 @@
 SECRET_KEY=123
 DEBUG=True
 
-DB_NAME=Blood_market
+DB_NAME=BODY
 DB_USER=postgres
 DB_PASSWORD=123
-DB_HOST=localhost
+DB_HOST=db
 DB_PORT=5432
 
+
+## Przykład uruchomienia aplikacji
+docker-compose up --build
